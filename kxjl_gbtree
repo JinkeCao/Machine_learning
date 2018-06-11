@@ -1,0 +1,35 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Mar 21 09:59:50 2018
+
+@author: jcao2014
+"""
+#import sys
+#sys.path.append('C:\Users\jcao2014\3D Objects')
+from xgboost import XGBClassifier, plot_tree
+import pandas
+from sklearn.cross_validation import train_test_split
+from sklearn.feature_extraction.text import CountVectorizer
+# from matplotlib.pylab import rcParams
+from sklearn.metrics import classification_report
+#import 20180321_plot_tree
+# rcParams['figure.figsize'] = 80,50
+
+
+
+
+input1 = '20180321_kxjl_tags'
+df1=pandas.read_table(input1)
+X_train, X_test, y_train, y_test = train_test_split(df1.tags, df1.label, test_size=0.2, random_state=231)
+vec = CountVectorizer()
+x_vec = vec.fit_transform(X_train)
+ll = x_vec.toarray()
+c = vec.get_feature_names()
+x_train = pandas.DataFrame(data=ll, columns=c)
+x_vec = vec.transform(X_test)
+ll = x_vec.toarray()
+x_test = pandas.DataFrame(data=ll, columns=c)
+model = XGBClassifier(n_jobs=-1, n_estimators=2000)
+model.fit(x_train, y_train)
+y_pred = model.predict(x_test)
+print(classification_report(y_test, y_pred))
